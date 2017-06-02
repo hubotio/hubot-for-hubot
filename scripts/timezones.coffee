@@ -102,9 +102,11 @@ sendUserTime = (res, user) ->
 
 module.exports = (robot) ->
   robot.respond /time(?: (.+))?/i, (res) ->
-    subcommand = res.match[1]
+    subcommand = res.match[1] or ''
+    subcommand = subcommand.replace(/^me( |$)/, '')
+
     user = res.message.user
-    if not subcommand or subcommand is 'me'
+    if subcommand is ''
       sendUserTime(res, user)
       return
 
@@ -120,7 +122,6 @@ module.exports = (robot) ->
       location = timeInMatch[2]
       convertTime(res, timestamp, location)
       return
-
 
     userNames = res.match[1].split(/\s/)
 
