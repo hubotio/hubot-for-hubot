@@ -1,6 +1,6 @@
 # hubot-for-hubot
 
-hubot is a chat bot built on the [Hubot][hubot] framework for helping the hubot community. 
+hubot is a chat bot built on the [Hubot][hubot] framework for helping the [Hubot community on Slack](https://hubot-slackin.herokuapp.com/). 
 
 ### Running hubot Locally
 
