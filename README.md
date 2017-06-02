@@ -24,11 +24,11 @@ Then you can interact with hubot by typing `hubot help`.
 
 ### Scripting
 
-An example script is included at `scripts/example.coffee`, so check it out to
-get started, along with the [Scripting Guide][scripting-docs].
+See `scripts` and `external-scripts`. See [Scripting Guide][scripting-docs] for
+documentation on writing scripts in general.
 
-For many common tasks, there's a good chance someone has already one to do just
-the thing.
+For many common tasks, there's a a chance someone has already written one and
+published to [npm](https://www.npmjs.com/search?q=hubot) already.
 
 [scripting-docs]: https://github.com/github/hubot/blob/master/docs/scripting.md
 
