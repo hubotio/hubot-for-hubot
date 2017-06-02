@@ -1,9 +1,6 @@
 # Description:
 #   Enable hubot to convert timezones for you.
 #
-# Dependencies:
-#   "moment": "^2.10.3"
-#
 # Commands:
 #   hubot time <usernames...> - Show the time for the following users
 #   hubot time in <location> - Ask hubot for a time in a location
@@ -17,6 +14,7 @@ moment = require('moment-timezone')
 
 util = require('util')
 
+
 parseTime = (timeStr) ->
   m = moment.utc(timeStr, [
     'ha', 'h:ma',
@@ -27,12 +25,14 @@ parseTime = (timeStr) ->
   ], true)
   return if m.isValid() then m.unix() else null
 
+
 formatTime = (timestamp) ->
   return timestamp.format('dddd, MMMM Do YYYY, h:mm:ss a')
 
+
 # Use Google's Geocode and Timezone APIs to get timezone offset for a location.
 getTimezoneInfo = (res, timestamp, location, callback) ->
-  q = querystring.stringify({ address: location, sensor: false })
+  q = querystring.stringify(address: location, sensor: false)
 
   # TODO consider using geocoder module
   res.http('https://maps.googleapis.com/maps/api/geocode/json?' + q)
@@ -71,19 +71,6 @@ getTimezoneInfo = (res, timestamp, location, callback) ->
             tz: json.timeZoneId,
           })
 
-# Convert time between 2 locations and send back the results.
-# If `fromLocation` is null, send back time in `toLocation`.
-convertTime = (res, timestamp, toLocation) ->
-  sendLocalTime = (timestamp, location) ->
-    getTimezoneInfo res, timestamp, location, (err, result) ->
-      if (err)
-        res.send("I can't find the time at #{location}: #{err}.")
-      else
-
-        localTimestamp = timestamp.tz(result.tz)
-        res.send("Time in #{result.formattedAddress} is #{formatTime(localTimestamp)}")
-
-  sendLocalTime(timestamp, toLocation)
 
 sendUserTime = (res, user) ->
   tz = user?.slack?.tz or user?.tz
@@ -100,31 +87,50 @@ sendUserTime = (res, user) ->
   else
     res.send "It is #{formattedTime} for #{user.name} in #{timestamp.zoneName()}"
 
+
+sendTimeInLocation = (res, user, time, location) ->
+  timestamp = if time?
+    moment.tz(user.tz, time)
+  else
+    moment.tz(user.tz)
+
+  sendLocalTime = (timestamp, location) ->
+    getTimezoneInfo res, timestamp, location, (err, result) ->
+      if (err)
+        res.send("I can't find the time at #{location}: #{err}.")
+      else
+
+        localTimestamp = timestamp.tz(result.tz)
+        res.send("Time in #{result.formattedAddress} is #{formatTime(localTimestamp)}")
+
+  sendLocalTime(timestamp, location)
+
+
 module.exports = (robot) ->
   robot.respond /time(?: (.+))?/i, (res) ->
     subcommand = res.match[1] or ''
     subcommand = subcommand.replace(/^me( |$)/, '')
 
-    user = res.message.user
     if subcommand is ''
+      user = res.message.user # FIXME this is just an Object, not a hubot User
       sendUserTime(res, user)
       return
 
+    # Match things like:
+    # 1:58 in Savannah, GA
+    # in San Francisco
     timeInMatch = subcommand.match(/(?:(\S+) )?in (.*)/)
 
     if timeInMatch?
-      time = timeInMatch[1]
-      timestamp = if time?
-        moment.tz(user.tz, time)
-      else
-        moment.tz(user.tz)
+      user = res.message.user # FIXME this is just an Object, not a hubot User
 
+      time = timeInMatch[1]
       location = timeInMatch[2]
-      convertTime(res, timestamp, location)
+
+      sendTimeInLocation(res, user, timeInMatch[1], timeInMatch[2])
       return
 
     userNames = res.match[1].split(/\s/)
-
     for userName in userNames
       userName = userName.replace(/^@/, '') # FIXME slack adapter should probably handle this detail
       user = robot.brain.userForName(userName)
