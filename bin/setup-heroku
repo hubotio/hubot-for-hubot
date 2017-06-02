@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+if ! which heroku &> /dev/null; then
+  echo "Missing Heroku Toolbelt: https://devcenter.heroku.com/articles/heroku-cli"
+fi
+
+if ! heroku auth:whoami &> /dev/null; then
+  export HEROKU_ORGANIZATION=github-enterprise
+  heroku login --sso
+fi
+
+if ! git remote | grep -q heroku; then
+  heroku git:remote --app hubot-for-hubot
+fi
