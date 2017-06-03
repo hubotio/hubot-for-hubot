@@ -40,4 +40,4 @@ module.exports = (robot) ->
     for userName in userNames
       userName = userName.replace(/^@/, '') # FIXME slack adapter should probably handle this detail
       user = robot.brain.userForName(userName)
-      sendUserTime(res, user)
+      timezoneIntents.sendUserTime(res, user)

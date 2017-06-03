@@ -14,7 +14,7 @@ parseTime = (tz, timeStr) ->
   return if m.isValid() then m else null
 
 formatTime = (timestamp) ->
-  return timestamp.format('dddd, MMMM Do YYYY, h:mm:ss a')
+  timestamp.format('dddd, MMMM Do YYYY, h:mm:ss a')
 
 # Use Google's Geocode and Timezone APIs to get timezone offset for a location.
 getTimezoneInfo = (res, timestamp, location, callback) ->
@@ -61,12 +61,12 @@ sendUserTime = (res, user) ->
   tz = user?.slack?.tz or user?.tz
 
   unless tz
-    res.reply "I don't know nothing about #{user.name}'s timezone"
+    res.reply "I don't know #{user.name}'s timezone"
     return
 
   timestamp = moment().tz(tz)
 
-  formattedTime = timestamp.format('dddd, MMMM Do YYYY, h:mm:ss a')
+  formattedTime = formatTime(timestamp)
   if res.message.user is user
     res.send "It is #{formattedTime} in #{timestamp.zoneName()}"
   else
