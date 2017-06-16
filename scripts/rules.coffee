@@ -1,3 +1,8 @@
+# Description:
+#   Law of Robotics, as understood by Hubot
+#
+# Commands
+#   hubot what are the rules? - hubot explains the Laws of Robotics, as it understands them
 Bravey = require("bravey")
 
 rules = [
@@ -19,7 +24,6 @@ module.exports = (robot) ->
   rulesNlp.addDocument "does hubot know the 3 laws of rules of robotics", "explain_the_rules"
   rulesNlp.addDocument "has hubot read the Robot series?", "explain_the_rules"
   rulesNlp.addDocument "does hubot read Asimov?", "explain_the_rules"
-
 
   robot.listen(
     (message) ->
