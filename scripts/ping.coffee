@@ -6,7 +6,7 @@
 #   hubot echo <text> - Reply back with <text>
 #   hubot time - Reply with current time
 #
-# Note:
+# Notes:
 #   This is adapted from hubot-diagnostic with removals to avoid conflict with timezones.coffee
 #
 # Author:
