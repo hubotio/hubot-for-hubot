@@ -1,6 +1,5 @@
 [
   "hubot-help",
-  "hubot-google-images",
   "hubot-redis-brain",
   "hubot-rules",
   "hubot-shipit"
