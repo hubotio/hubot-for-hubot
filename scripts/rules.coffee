@@ -14,28 +14,34 @@ rules = [
 
 {inspect} = require 'util'
 module.exports = (robot) ->
-  rulesNlp = new Bravey.Nlp.Fuzzy()
-  rulesNlp.addIntent "explain_the_rules", []
-  rulesNlp.addDocument "Does #{robot.name} know the rules?", "explain_the_rules"
-  rulesNlp.addDocument "#{robot.name} what are the rules?", "explain_the_rules"
-  rulesNlp.addDocument "@#{robot.name} what are the rules?", "explain_the_rules"
-  rulesNlp.addDocument "does hubot know the laws of rules of robotics", "explain_the_rules"
-  rulesNlp.addDocument "does hubot know the three laws of rules of robotics", "explain_the_rules"
-  rulesNlp.addDocument "does hubot know the 3 laws of rules of robotics", "explain_the_rules"
-  rulesNlp.addDocument "has hubot read the Robot series?", "explain_the_rules"
-  rulesNlp.addDocument "does hubot read Asimov?", "explain_the_rules"
+
+  robot.bravey = new Bravey.Nlp.Fuzzy()
+  robot.bravey.addIntent "explain_the_rules", []
+  robot.bravey.addDocument "Does #{robot.name} know the rules?", "explain_the_rules"
+  robot.bravey.addDocument "#{robot.name} what are the rules?", "explain_the_rules"
+  robot.bravey.addDocument "@#{robot.name} what are the rules?", "explain_the_rules"
+  robot.bravey.addDocument "does hubot know the laws of rules of robotics", "explain_the_rules"
+  robot.bravey.addDocument "does hubot know the three laws of rules of robotics", "explain_the_rules"
+  robot.bravey.addDocument "does hubot know the 3 laws of rules of robotics", "explain_the_rules"
+  robot.bravey.addDocument "has hubot read the Robot series?", "explain_the_rules"
+  robot.bravey.addDocument "does hubot read Asimov?", "explain_the_rules"
+
+  robot.receiveMiddleware (context, next, done) ->
+    message = context.response.message
+    if message.text?
+      message.bravey = robot.bravey.test(message.text)
+
+    next(done)
 
   robot.listen(
     (message) ->
       return unless message.text
-
-      result = rulesNlp.test(message.text)
-      console.log inspect result
-
-      return unless result.intent is "explain_the_rules"
+      console.log inspect message.bravey
+      return unless message.bravey.intent is "explain_the_rules"
 
       # we only train for one specific intent. that means we only care when it is _reallly_ highly scored
-      result.score > 0.999
+      if message.bravey.score > 0.999
+        message.bravey
     (response) ->
       response.send rules.join('\n')
   )
