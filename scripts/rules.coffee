@@ -17,6 +17,16 @@ module.exports = (robot) ->
 
   robot.bravey = new Bravey.Nlp.Fuzzy()
   robot.bravey.addIntent "explain_the_rules", []
+
+  rulesSubject = new Bravey.StringEntityRecognizer("the_rules_subject")
+  rulesSubject.addMatch "asimov", "asimov"
+  rulesSubject.addMatch "asimov", "isaac asimov"
+  rulesSubject.addMatch "robot_series", "robot series"
+  rulesSubject.addMatch "robot_series", "the robot series"
+  rulesSubject.addMatch "laws_of_robotics", "the rules"
+  rulesSubject.addMatch "laws_of_robotics", "the laws of robotics"
+  rulesSubject.addMatch "laws_of_robotics", "the 3 laws of robotics"
+
   robot.bravey.addDocument "Does #{robot.name} know the rules?", "explain_the_rules"
   robot.bravey.addDocument "#{robot.name} what are the rules?", "explain_the_rules"
   robot.bravey.addDocument "@#{robot.name} what are the rules?", "explain_the_rules"
@@ -33,16 +43,18 @@ module.exports = (robot) ->
 
     next(done)
 
-  robot.listen(
-    (message) ->
-      return unless message.text
-      console.log inspect message.bravey
-      return unless message.bravey.intent is "explain_the_rules"
+  robot.intent = (name, cb) ->
+    robot.listen(
+      (message) ->
+        return unless message.text
+        console.log inspect message.bravey
+        return unless message.bravey.intent is name
 
-      # we only train for one specific intent. that means we only care when it is _reallly_ highly scored
-      if message.bravey.score > 0.999
-        message.bravey
-    (response) ->
-      response.send rules.join('\n')
-  )
+        # we only train for one specific intent. that means we only care when it is _reallly_ highly scored
+        if message.bravey.score > 0.999
+          message.bravey
+      cb
+    )
 
+  robot.intent 'explain_the_rules', (res) ->
+    res.send rules.join('\n')
