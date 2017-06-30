@@ -8,4 +8,3 @@ notifications:
 sudo: false
 before_script:
   - npm prune
-  - bin/e2e-test.sh
