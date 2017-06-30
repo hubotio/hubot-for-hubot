@@ -2,13 +2,22 @@
   "private": true,
   "description": "A hubot install for the Hubot community",
   "dependencies": {
+    "coffee-script": "^1.12.6",
     "hubot": "^2.19.0",
     "hubot-help": "^0.2.0",
     "hubot-redis-brain": "0.0.3",
     "hubot-rules": "^0.1.1",
     "hubot-shipit": "^0.2.0",
     "hubot-slack": "^4.3.4",
+    "mocha": "^3.4.2",
     "moment-timezone": "^0.5.13"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "hubot-test-helper": "^1.5.1"
+  },
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register"
   },
   "engines": {
     "node": "4.8.3"
