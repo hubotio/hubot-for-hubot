@@ -1,7 +1,5 @@
 # hubot-for-hubot
 
-[![Build Status](https://travis-ci.org/hubotio/hubot-for-hubot.svg?branch=master)](https://travis-ci.org/hubotio/hubot-for-hubot)
-
 hubot-for-hubot is a chat bot built on the [Hubot](https://hubot.github.com) framework for helping the [Hubot community on Slack](https://hubot-slackin.herokuapp.com/). Hubot. Hubot? Hubot!
 
 ### Running hubot Locally
